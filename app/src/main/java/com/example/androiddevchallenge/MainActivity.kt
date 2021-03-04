@@ -18,11 +18,14 @@ package com.example.androiddevchallenge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
@@ -30,17 +33,31 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                StyleProvider {
+                    MyApp()
+                }
             }
         }
     }
+}
+
+val LocalBorderStroke = compositionLocalOf<BorderStroke> { error("Not found!") }
+
+@Composable
+fun StyleProvider(content: @Composable () -> Unit) {
+    // TODO: Adjust values dynamically, offer styles
+    val borderStroke = BorderStroke(4.dp, MaterialTheme.colors.primary)
+    CompositionLocalProvider(
+        LocalBorderStroke provides borderStroke,
+        content = content
+    )
 }
 
 // Start building your app here!
 @Composable
 fun MyApp() {
     Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+        AnimatedClockDemo()
     }
 }
 
