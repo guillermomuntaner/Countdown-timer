@@ -57,7 +57,7 @@ fun StyleProvider(content: @Composable () -> Unit) {
 @Composable
 fun MyApp() {
     Surface(color = MaterialTheme.colors.background) {
-        AnimatedClockDemo()
+        AnimatedTimer()
     }
 }
 
