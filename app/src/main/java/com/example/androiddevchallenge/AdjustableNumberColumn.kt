@@ -15,7 +15,10 @@
  */
 package com.example.androiddevchallenge
 
+import android.content.Context
+import android.media.AudioManager
 import android.util.Log
+import android.view.SoundEffectConstants
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloatAsState
@@ -47,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +75,7 @@ fun NumberColumn(maxDigit: Int, digit: Int, interactionSource: MutableInteractio
     }
 
     // Local values
+    val context = LocalContext.current
     val density = LocalDensity.current
     val borderStroke = LocalBorderStroke.current
     val hapticFeedback = LocalHapticFeedback.current
@@ -142,11 +147,16 @@ fun NumberColumn(maxDigit: Int, digit: Int, interactionSource: MutableInteractio
                             "deltapx: $deltaPx dragDelta: $dragDelta acc: $acc newValue: $newValue digit: $digit"
                         )
                         if (newValue != digit) {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                             // Reduce acc delta by the exact displacement
                             val newValueDestinationY =
                                 (newValue * digitHeight).dp - cardHeight / 2 + digitHeight.dp / 2
                             dragDelta = acc - newValueDestinationY
+                            // Haptic feedback
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                            // Sound feedback
+                            val sound = if (newValue > digit) SoundEffectConstants.NAVIGATION_UP else SoundEffectConstants.NAVIGATION_DOWN
+                            (context.getSystemService(Context.AUDIO_SERVICE) as AudioManager)
+                                .playSoundEffect(sound, 1.0f)
                             // Report new value
                             onAdjust(newValue)
                         }
